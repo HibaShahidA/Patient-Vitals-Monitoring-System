@@ -38,6 +38,20 @@ def create_staff(departments):
     db.commit()
     return staff
 
+def create_credentials(staff_members):
+    credentials = []
+    for staff in staff_members:
+        raw_password = fake.password(length=5) # Raw password (to be deleted after testing)
+        credentials.append(Credential(
+            staff_id=staff.id,
+            password_hash=generate_password_hash(raw_password),  # Hashed random password
+            password_plaintext=raw_password # Temporarily store raw passwrod
+        ))
+        # print for testing
+        print(f"Staff {staff.id}: {raw_password}")
+    db.add_all(credentials)
+    db.commit()
+
 def create_patients(departments, staff):
     patients = []
     for _ in range(30):
