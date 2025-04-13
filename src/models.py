@@ -12,6 +12,14 @@ class Staff(Base):
     department = relationship("Department", back_populates="staff")
     patient_assignments = relationship("PatientStaff", back_populates="staff")
 
+class Credential(Base):
+    __tablename__ = "credentials"
+    staff_id = Column(Integer, ForeignKey("staff.id"), primary_key=True)
+    password_hash = Column(String(128), nullable=False)  # Stores hashed passwords
+    # TEMPORARY FIELD (to be removed after testing)
+    password_plaintext = Column(String(50), nullable=True)  # Stores raw password
+    staff = relationship("Staff", back_populates="credential")
+
 class Department(Base):
     __tablename__ = "department"
     id = Column(Integer, primary_key=True)
