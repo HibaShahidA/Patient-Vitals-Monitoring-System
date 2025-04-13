@@ -1,0 +1,12 @@
+models.py
+credential class for storing staff password
+more tables can be added
+
+mock_data_gen.py
+should show passwords but they are meant to be stored as hash addresses to maintain security
+the option to view raw passwords is temporary and can be removed from the code without issues
+
+db_connect.py
+estavlishes a base for db connection
+allows the db to be connected in a way that we can create random data or populate it with real world data
+no changes to be done, just foundation structure
