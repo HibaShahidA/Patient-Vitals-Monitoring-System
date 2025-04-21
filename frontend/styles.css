@@ -1,0 +1,135 @@
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.login-container {
+    background-color: #aaccdd;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: #0c0c0c;
+}
+
+input[type="text"] {
+    width: 80%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #090808;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.display-graphs {
+    background-color: #f1f4f7;
+    color: #0e0c0c;
+}
+
+.display-graphs:hover {
+    background-color: #057905;
+}
+
+.exit {
+    background-color: #f2f8fa;
+    color: #0c0b0b;
+}
+
+.exit:hover {
+    background-color: #c82333;
+}
+
+ /* for graphs.html*/ 
+ /* General body styling */
+
+ body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f0f2f5;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.patient-info {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 30px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.graphs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.graph {
+    border: 1px solid #0187c6;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.graph h3 {
+    margin-top: 0;
+    color: #2c3e50;
+}
+
+.graph-placeholder {
+    height: 200px;
+    background: #aaccdd;
+    border: 1px dashed #3498db;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #aaccdd;
+    font-weight: bold;
+}
