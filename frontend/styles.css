@@ -1,4 +1,3 @@
-/* styles.css */
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
@@ -14,7 +13,7 @@ body {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 300px;
+    width: 350px; /* Slightly wider to accommodate 3 buttons */
     text-align: center;
 }
 
@@ -43,15 +42,17 @@ input[type="text"] {
 .buttons {
     display: flex;
     justify-content: space-between;
+    gap: 10px; /* Adds space between buttons */
 }
 
 .btn {
-    padding: 10px 20px;
+    padding: 10px 12px; /* Smaller horizontal padding */
     border: none;
     border-radius: 4px;
-    font-size: 14px;
+    font-size: 13px; /* Slightly smaller font */
     cursor: pointer;
     transition: background-color 0.3s ease;
+    flex: 1; /* Makes buttons equal width */
 }
 
 .display-graphs {
@@ -61,67 +62,359 @@ input[type="text"] {
 
 .display-graphs:hover {
     background-color: #057905;
+    color: white;
 }
 
-.exit {
+.view-details {
+    background-color: #f1f4f7;
+    color: #0e0c0c;
+}
+
+.view-details:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
+.logout {
     background-color: #f2f8fa;
     color: #0c0b0b;
 }
 
-.exit:hover {
+.logout:hover {
     background-color: #c82333;
+    color: white;
 }
 
- /* for graphs.html*/ 
- /* General body styling */
-
- body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
-    background-color: #f0f2f5;
-}
-
-.container {
-    max-width: 1000px;
-    margin: 0 auto;
-    background: white;
+/* Alert Page Styling */
+.login-container.alert-style {
+    background-color: #aaccdd; /* Same blue as patient details */
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 350px; /* Slightly wider to accommodate 3 buttons */
+    text-align: center;
+
+}
+
+
+.alert-title {
+    color: #000000; /* Red for alert */
+    font-size: 24px; /* Same as h1 in patient details */
+    margin-bottom: 20px; /* Same spacing */
+    text-transform: uppercase; /* For ALERT! text */
+}
+
+.alert-message h2 {
+    color: #d32f2f;
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+.alert-message p {
+    color: #0c0c0c; /* Same as label color */
+    margin-bottom: 25px;
+    font-size: 14px; /* Same as input text */
+}
+
+.btn.go-back {
+    background-color: #f1f4f7; /* Same as other buttons */
+    color: #0e0c0c; /* Same text color */
+    padding: 10px; /* Same padding */
+    width: 100%; /* Full width like others */
+    font-size: 14px; /* Consistent */
+    border: none;
+    border-radius: 4px; /* Same radius */
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn.go-back:hover {
+    background-color: #c82333; /* Same red as logout */
+    color: white; /* White text on hover */
+}
+
+/* Login Page Specific Styles */
+.login-container h1 {
+    color: #333;
+    margin-bottom: 30px;
+}
+
+input[type="password"] {
+    width: 80%;
+    padding: 10px;
+    margin-bottom: 25px;
+    border: 1px solid #090808;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.btn.login-btn {
+    width: 85%;
+    padding: 12px;
+    background-color: #f1f4f7;
+    color: #0e0c0c;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn.login-btn:hover {
+    background-color: #057905;
+    color: white;
+}
+/* ===== PATIENT MONITORING DASHBOARD ===== */
+body {
+    margin: 0;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .compact-container {
+    width: 95vw;
+    height: 90vh;
+    margin: 0 auto;
+    background-color: #aaccdd;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* ===== LARGE TEXT ELEMENTS ===== */
+  h1 {
+    text-align: center;
+    margin: 0 0 25px 0;
+    color: #2c3e50;
+    font-size: 32px; /* Extra large title */
+    font-weight: 600;
+  }
+  
+  .patient-header {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    background: rgba(255,255,255,0.8);
+    padding: 15px;
+    border-radius: 8px;
+  }
+  
+  .patient-data {
+    font-size: 22px; /* Very large patient info */
+    white-space: nowrap;
+    font-weight: 500;
+    color:#34495e;
+  }
+  
+  /* ===== GRAPH CONTAINERS ===== */
+  .graph-grid-horizontal {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 25px;
+    flex-grow: 1;
+    min-height: 0;
+    padding: 10px;
+  }
+  
+  .graph-section {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  }
+  
+  .graph-title {
+    text-align: center;
+    margin: 0 0 20px 0;
+    font-size: 24px; /* Large graph titles */
+    color: #2980b9;
+    font-weight: 600;
+  }
+  
+  .graph-display {
+    background-color: #f8fafc;
+    border: 1px solid #d6e4f0;
+    border-radius: 8px;
+    flex-grow: 1;
+    min-height: 170px; /* Slightly compact boxes */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #7f8c8d;
+    font-size: 20px; /* Large placeholder text */
+  }
+  
+  /* ===== ACTION BUTTON ===== */
+  .action-buttons {
+    text-align: center;
+    margin-top: 25px;
+  }
+  
+  .btn.go-back {
+    width: 160px;
+    padding: 14px;
+    background: #f1f4f7;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 20px; /* Large button text */
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  
+  .btn.go-back:hover {
+    background: #0056b3;
+    color: white;
+    transform: translateY(-2px);
+  }
+  
+  /* ===== RESPONSIVE ADJUSTMENTS ===== */
+  @media (max-width: 1200px) {
+    .graph-grid-horizontal {
+      grid-template-columns: 1fr;
+    }
+    
+    .patient-header {
+      gap: 20px;
+    }
+    
+    .graph-display {
+      min-height: 150px;
+    }
+  }
+
+ /* ===== PATIENT INFORMATION PAGE ===== */
+body {
+    margin: 0;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    overflow-y: auto;
+    min-height: 100vh;
+}
+
+.patient-container {
+    width: 90%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 25px;
+    background-color: #aaccdd;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
 }
 
 h1 {
     text-align: center;
-    color: #333;
+    color: #2c3e50;
+    font-size: 28px;
+    margin-top: 0;
+    margin-bottom: 25px;
+}
+
+.info-section {
+    margin-bottom: 25px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.info-section h2 {
+    color: #2c3e50;
+    font-size: 22px;
+    margin-top: 0;
     margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #aaccdd;
 }
 
-.patient-info {
-    display: flex;
-    gap: 30px;
-    margin-bottom: 30px;
-    padding: 10px 0;
-    border-bottom: 1px solid #eee;
-}
-
-.graphs-grid {
+.info-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
 }
 
-.graph {
-    border: 1px solid #0187c6;
-    border-radius: 8px;
-    padding: 15px;
+.medical-grid {
+    grid-template-columns: 1fr;
 }
 
-.graph h3 {
-    margin-top: 0;
-    color: #2c3e50;
+.info-item {
+    margin-bottom: 15px;
 }
 
+<<<<<<< HEAD:styles.css
+.info-item label {
+    display: block;
+    font-weight: 600;
+    color: #34495e;
+    margin-bottom: 5px;
+    font-size: 16px;
+}
+
+.info-value {
+    padding: 10px 15px;
+    background-color: #f1f4f7;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+.info-value ul {
+    margin: 5px 0;
+    padding-left: 20px;
+}
+
+.action-buttons {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.back-btn {
+    background-color: #f1f4f7; /* Same as other buttons */
+  
+    color: rgb(25, 2, 2);
+}
+
+.back-btn:hover {
+    background-color: #0056b3;
+    
+    box-shadow: 0 3px 10px rgba(200, 60, 60, 0.3);
+}
+
+@media (max-width: 768px) {
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .patient-container {
+        width: 95%;
+        padding: 15px;
+    }
+    
+    h1 {
+        font-size: 24px;
+    }
+}
+=======
 .graph-placeholder {
     height: 200px;
     background: #aaccdd;
@@ -133,3 +426,4 @@ h1 {
     color: #aaccdd;
     font-weight: bold;
 }
+>>>>>>> 7b706417342a614347416c3b8061de61e9ca166c:frontend/styles.css

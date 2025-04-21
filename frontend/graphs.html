@@ -3,39 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patient Graphs</title>
+    <title>Patient Monitoring</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Patient Vitals</h1>
+    <div class="compact-container">
+        <h1>Patient Monitoring</h1>
         
-        <!-- Patient Info Row -->
-        <div class="patient-info">
-            <div><strong>Patient Name:</strong> [Patient Name]</div>
-            <div><strong>Date:</strong> [Date]</div>
-            <div><strong>Time:</strong> [Time]</div>
+        <div class="patient-header">
+            <span class="patient-data"><strong>Patient:</strong> <span id="patient-name">John Doe</span></span>
+            <span class="patient-data"><strong>Date:</strong> <span id="current-date"></span></span>
+            <span class="patient-data"><strong>Time:</strong> <span id="current-time"></span></span>
         </div>
 
-        <!-- Graphs Grid -->
-        <div class="graphs-grid">
-            <div class="graph">
-                <h3>Heart Rate Graph</h3>
-                <div class="graph-placeholder"></div>
+        <div class="graph-grid-horizontal">
+            <div class="graph-section">
+                <h2 class="graph-title">Glucose Levels</h2>
+                <div class="graph-display" id="glucose-chart-1"></div>
             </div>
-            <div class="graph">
-                <h3>Glucose Graph</h3>
-                <div class="graph-placeholder"></div>
+            <div class="graph-section">
+                <h2 class="graph-title">Glucose Trends</h2>
+                <div class="graph-display" id="glucose-chart-2"></div>
             </div>
-            <div class="graph">
-                <h3>Oxygen Level Graph</h3>
-                <div class="graph-placeholder"></div>
+            <div class="graph-section">
+                <h2 class="graph-title">Glucose History</h2>
+                <div class="graph-display" id="glucose-chart-3"></div>
             </div>
-            <div class="graph">
-                <h3>Breathing Rate Graph</h3>
-                <div class="graph-placeholder"></div>
+            <div class="graph-section">
+                <h2 class="graph-title">Breathing Rate</h2>
+                <div class="graph-display" id="breathing-chart"></div>
             </div>
         </div>
+
+        <div class="action-buttons">
+            <button class="btn go-back">Go Back</button>
+        </div>
     </div>
+
+    <script>
+        // Real-time clock with AM/PM
+        function updateDateTime() {
+            const now = new Date();
+            document.getElementById('current-date').textContent = 
+                `${now.getMonth()+1}/${now.getDate()}/${now.getFullYear()}`;
+            
+            let hours = now.getHours();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            
+            document.getElementById('current-time').textContent = 
+                `${hours}:${minutes}:${seconds} ${ampm}`;
+        }
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+    </script>
 </body>
 </html>
