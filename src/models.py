@@ -65,6 +65,7 @@ class Medication(Base):
     __tablename__ = "medication"
     med_id = Column(Integer, ForeignKey("medicine.id"), primary_key=True)
     patient_id = Column(Integer, ForeignKey("patient.id"), primary_key=True)
+    dosage_times = Column(String)
     
     medicine = relationship("Medicine", back_populates="medications")
     patient = relationship("Patient", back_populates="medications")

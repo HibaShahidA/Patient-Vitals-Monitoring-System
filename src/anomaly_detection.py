@@ -30,18 +30,34 @@ def detect_anomalies(patients):
         vitals = db.query(Vital).filter_by(patient_id=patient.id).order_by(Vital.timestamp.desc()).limit(10).all()
         vitals = list(reversed(vitals)) # oldest to newest
         
-        anomaly_count = 0
+        consecutive_anomaly_flag = False
+        consecutive_count = 0
+        max_consecutive = 0
+
         for v in vitals:
-            if (
+            is_anomaly = (
                 v.systolic < threshold.systolic_lower or v.systolic > threshold.systolic_upper or
                 v.diastolic < threshold.diastolic_lower or v.diastolic > threshold.diastolic_upper or
                 v.blood_sugar < threshold.blood_sugar_lower or v.blood_sugar > threshold.blood_sugar_upper or
                 v.pulse_rate < threshold.pulse_rate_lower or v.pulse_rate > threshold.pulse_rate_upper or
                 v.oxygen_volume < threshold.oxygen_levels_lower or v.oxygen_volume > threshold.oxygen_levels_upper
-            ):
-                anomaly_count += 1
+            )
+
+            if is_anomaly:
+                if consecutive_anomaly_flag:
+                    consecutive_count += 1
+                else:
+                    consecutive_anomaly_flag = True
+                    consecutive_count = 1
+            else:
+                # If normal, reset flag and counter
+                consecutive_anomaly_flag = False
+                consecutive_count = 0
+
+            max_consecutive = max(max_consecutive, consecutive_count)
+
                 
-        if anomaly_count >= 10:
+        if max_consecutive >= 10:
             alert = Alert(
                 patient_id=patient.id,
                 message="More than 10 anomalies detected! Critical!",
@@ -50,7 +66,7 @@ def detect_anomalies(patients):
             )
             db.add(alert)
    
-        elif anomaly_count >= 5:
+        elif max_consecutive >= 5:
             alert = Alert(
                 patient_id=patient.id,
                 message="More than 5 anomalies detected! Attention required!",
@@ -59,7 +75,7 @@ def detect_anomalies(patients):
             )
             db.add(alert)
             
-        elif anomaly_count >= 2:
+        elif max_consecutive >= 2:
             alert = Alert(
                 patient_id=patient.id,
                 message="2 anomalies detected!",

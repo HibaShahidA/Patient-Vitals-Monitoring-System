@@ -131,7 +131,8 @@ def create_medications(patients, medicines):
         for m in assigned_meds:
             med = Medication(
                 patient_id=patient.id,
-                med_id=m.id
+                med_id=m.id,
+                dosage_times=random.choice(["Once a day", "Twice a day", "Three times a day", "Four times a day"])
             )
             meds.append(med)
     db.add_all(meds)
