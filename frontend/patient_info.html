@@ -123,5 +123,28 @@
             <button class="btn back-btn">Back</button>
         </div>
     </div>
+
+    <script>
+        // Fetch and display patient information
+        async function fetchPatientInfo() {
+            const response = await fetch('/patient_info');  // Backend endpoint to fetch patient details
+            const data = await response.json();
+
+            if (data) {
+                // Populate the patient information fields
+                document.getElementById('full-name').textContent = data.full_name;
+                document.getElementById('dob').textContent = data.dob;
+                document.getElementById('gender').textContent = data.gender;
+                document.getElementById('patient-id').textContent = data.patient_id;
+                document.getElementById('emergency-name').textContent = data.emergency_contact.name;
+                document.getElementById('emergency-relationship').textContent = data.emergency_contact.relationship;
+                document.getElementById('emergency-phone').textContent = data.emergency_contact.phone;
+            } else {
+                alert("No patient information available.");
+            }
+        }
+
+        fetchPatientInfo();  // Call function to fetch patient info when page loads
+    </script>
 </body>
 </html>
