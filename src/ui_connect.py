@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, session, send_from_directory, redirect, render_template
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from models import Staff, Patient, Vital
+from models import Staff, Patient, Vital, Alert, PatientStaff
 from report_details import fetch_patient_details
 from auth_utils import authenticate_staff, is_authorized_for_patient
 from graph_utils import generate_graph_data
@@ -35,7 +35,7 @@ def login():
         if staff.role == "doctor":
             # go to patient_details_doctor
             return jsonify({'redirect': '/patient_details_doctor'})
-        elif staff.role == "nurse":
+        elif staff.role == "nurse" or staff.role == "head_nurse":
             # go to patient_details_doctor
             return jsonify({'redirect': '/patient_details_nurse'})
         else:
@@ -60,6 +60,14 @@ def patient_details_nurse():
         if not staff_id:
             return jsonify({'redirect': '/login'}) # return to login page
         
+        if action == 'log_out':
+            # redirect to login.html page
+            session.clear()
+            return jsonify({'redirect': '/login'})
+        
+        if action == 'acknowledge_alert':
+            return jsonify({'redirect': '/graph'})
+        
         if is_authorized_for_patient(staff_id, patient_id):
             if action == 'show_vitals':
                 # redirect to vitals display page (graph)
@@ -71,6 +79,7 @@ def patient_details_nurse():
         else:
             # redirect to access_denied.html
             return jsonify({'redirect': '/access_denied'})
+        
     else:
         return render_template('patient_details_nurse.html')
     
@@ -86,6 +95,14 @@ def patient_details_doctor():
         
         if not staff_id:
             return jsonify({'redirect': '/login'}) # return to login page
+        
+        if action == 'log_out':
+            # redirect to login.html page
+            session.clear()
+            return jsonify({'redirect': '/login'})
+        
+        if action == 'acknowledge_alert':
+            return jsonify({'redirect': '/graph'})
         
         if is_authorized_for_patient(staff_id, patient_id):
             if action == "show_vitals":
@@ -164,6 +181,7 @@ def display_patient_info():
         except Exception as e:
             return jsonify({'error': str(e)}), 500
     
+    
 @app.route('/access_denied', methods=['GET', 'POST'])
 def deny_access():
     if request.method == 'POST':
@@ -182,6 +200,59 @@ def deny_access():
                 return jsonify({'redirect': '/login'})
     else:
         return render_template('access_denied.html')
+    
+    
+@app.route('/get_alerts', methods=['GET'])
+def check_alerts():
+    staff_id = session.get('staff_id')
+    if not staff_id:
+        return jsonify({"alert": None}), 401
+
+    ten_minutes_ago = datetime.now() - timedelta(minutes=10)
+
+    # Find all patients assigned to this staff member
+    assigned_patients = db.query(PatientStaff).filter_by(staff_id=staff_id).all()
+    alerts = []
+
+    for ps in assigned_patients:
+        if is_authorized_for_patient(staff_id, ps.patient_id):
+            patient_id = ps.patient_id
+
+            # Look for high-severity alerts in the last 10 minutes
+            recent_critical_alert = db.query(Alert).filter(
+                Alert.patient_id == patient_id,
+                Alert.severity == "high",
+                Alert.timestamp >= ten_minutes_ago
+            ).order_by(Alert.timestamp.desc()).first()
+
+            if recent_critical_alert:
+                patient = db.query(Patient).filter_by(id=patient_id).first()
+                alerts.append({
+                    "patient_id": patient.id,
+                    "patient_name": patient.name,
+                    "message": recent_critical_alert.message,
+                    "severity": recent_critical_alert.severity,
+                    "timestamp": recent_critical_alert.timestamp.isoformat()
+                })
+
+    if alerts:
+        return jsonify({"alert": alerts})  # Return all alerts
+    else:
+        return jsonify({"alert": None})
+
+# @app.route('/mark_alert_seen', methods=['POST'])
+# def mark_alert_seen():
+#     data = request.get_json()
+#     alert_id = data.get('alert_id')
+    
+#     # Fetch the alert from the database
+#     alert = db.query(Alert).filter(Alert.id == alert_id).first()
+    
+#     if alert:
+#         return jsonify({'message': 'Alert marked as seen', 'redirect': '/graph'})
+#     else:
+#         return jsonify({'error': 'Alert not found'}), 404
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
