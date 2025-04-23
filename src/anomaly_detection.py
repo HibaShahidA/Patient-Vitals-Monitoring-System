@@ -50,11 +50,11 @@ def detect_anomalies(patients):
 
         for v in vitals:
             is_anomaly = (
-                v.systolic < threshold.systolic_lower or v.systolic > threshold.systolic_upper or
-                v.diastolic < threshold.diastolic_lower or v.diastolic > threshold.diastolic_upper or
-                v.blood_sugar < threshold.blood_sugar_lower or v.blood_sugar > threshold.blood_sugar_upper or
-                v.pulse_rate < threshold.pulse_rate_lower or v.pulse_rate > threshold.pulse_rate_upper or
-                v.oxygen_volume < threshold.oxygen_levels_lower or v.oxygen_volume > threshold.oxygen_levels_upper
+                v.systolic < threshold["systolic_min"] or v.systolic > threshold["systolic_max"] or
+                v.diastolic < threshold["diastolic_min"] or v.diastolic > threshold["diastolic_max"] or
+                v.blood_sugar < threshold["blood_sugar_min"] or v.blood_sugar > threshold["blood_sugar_max"] or
+                v.pulse_rate < threshold["pulse_rate_min"] or v.pulse_rate > threshold["pulse_rate_max"] or
+                v.oxygen_volume < threshold["oxygen_volume_min"] or v.oxygen_volume > threshold["oxygen_volume_max"]
             )
 
             if is_anomaly:
@@ -97,6 +97,18 @@ def detect_anomalies(patients):
                 timestamp=datetime.now()
             )
             db.add(alert)
+            
+        elif max_consecutive == 0:
+            # Only add recovery if last alert was critical or medium
+            recent_alert = db.query(Alert).filter_by(patient_id=patient.id).order_by(Alert.timestamp.desc()).first()
+            if recent_alert and recent_alert.severity in ["high", "medium"]:
+                alert = Alert(
+                    patient_id=patient.id,
+                    message="Patient vitals have stabilized. Monitoring continues.",
+                    severity="low",
+                    timestamp=datetime.now()
+                )
+                db.add(alert)
         
     db.commit()
     
@@ -110,6 +122,6 @@ def run_anomaly_detection(patients):
     try:
         while True:
             detect_anomalies(patients)
-            time.sleep(1)
+            time.sleep(5)
     except KeyboardInterrupt:
         print("Stopped anomaly detection.")

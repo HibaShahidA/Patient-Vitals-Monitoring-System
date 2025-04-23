@@ -5,6 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Details</title>
     <link rel="stylesheet" href="frontend/styles.css">
+    <style>
+        /* Styling for pop-up alerts */
+        .alert-popup {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(255, 0, 0, 0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 1000;
+        }
+    </style>
 </head>
 <body>
     <div class="login-container">
@@ -15,12 +29,89 @@
             
             <div class="buttons">
                 <button type="button" class="btn display-graphs" id="display-graphs-btn">Display Graphs</button>
-                <button type="button" class="btn logout">Logout</button>
+                <button type="button" class="btn logout" id="logout-btn">Logout</button>
             </div>
         </form>
     </div>
+
+    <!-- Pop-up alert container -->
+    <div class="alert-popup" id="alert-popup">
+        <p id="alert-message"></p>
+        <button id="acknowledge-alert-btn">Acknowledge</button>
+    </div>
     
     <script>
+        let alertQueue = [];  // Store the alerts in this queue
+        let currentAlertIndex = 0;  // Track the current alert being displayed
+
+        // Function to fetch alerts from backend
+        async function fetchAlerts() {
+            try {
+                const response = await fetch('/get_alerts', {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' },
+                });
+                const data = await response.json();
+                console.log('Fetched alerts:', data);
+
+                // Check if we have critical alerts
+                if (data.alert && data.alert.length > 0) {
+                    alertQueue = data.alert; // Save alerts in the queue
+                    displayAlert(alertQueue[currentAlertIndex]); // Display the first alert
+                }
+            } catch (error) {
+                console.error('Error fetching alerts:', error);
+            }
+        }
+            
+        // Function to display the alert popup
+        function displayAlert(alert) {
+            const alertPopup = document.getElementById('alert-popup');
+            const alertMessage = document.getElementById('alert-message');
+            alertMessage.innerText = `${alert.message} (${alert.severity})`;
+            alertPopup.style.display = 'block'; // Show the popup
+
+            // Set the alert ID to be used for acknowledgment
+            alertPopup.setAttribute('data-alert-id', alert.id);
+        }
+
+        // Handle acknowledging the alert (click event)
+        document.getElementById('acknowledge-alert-btn').addEventListener('click', async function() {
+            const alertId = document.getElementById('alert-popup').getAttribute('data-alert-id');
+            const response = await acknowledgeAlert(alertId);
+            if (response.redirect) {
+                window.location.href = response.redirect;  // Redirect to the vitals graph page
+            } else {
+                document.getElementById('alert-popup').style.display = 'none';  // Close the alert popup
+                cycleAlert();  // Proceed to the next alert if any
+            }
+        });
+
+        // Function to acknowledge the alert (mark as seen)
+        async function acknowledgeAlert(alertId) {
+            try {
+                const response = await fetch('/patient_details_nurse', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ alert_id: alertId, action: 'acknowledge_alert' })
+                });
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error acknowledging alert:', error);
+            }
+        }
+
+        // Function to cycle through alerts (next alert)
+        function cycleAlert() {
+            if (alertQueue.length > 0) {
+                currentAlertIndex = (currentAlertIndex + 1) % alertQueue.length; // Move to the next alert (cyclic)
+                if (currentAlertIndex < alertQueue.length) {
+                    displayAlert(alertQueue[currentAlertIndex]); // Display the next alert
+                }
+            }
+        }
+
         // Waits for the button to be clicked
         document.getElementById('display-graphs-btn').addEventListener('click', async function(e) {
             e.preventDefault(); // Prevent the default page reload
@@ -47,6 +138,31 @@
                 alert(data.error || data.message || "Unknown error occurred.");
             }                
         });
+
+        document.getElementById('logout-btn').addEventListener('click', async function(e) {
+            e.preventDefault();
+
+            const response = await fetch('/patient_details_nurse', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'log_out'    // specify action
+                })
+            });
+
+            // If redirected by the backend, follow it
+            const data = await response.json();
+            if (data.redirect) {
+                window.location.href = data.redirect;
+            } 
+            // Otherwise, show any error or confirmation 
+            else {
+                alert(data.error || data.message || "Unknown error occurred.");
+            }
+        });
+
+        // Periodically fetch alerts every 5 seconds
+        setInterval(fetchAlerts, 5000);
     </script>
 </body>
 </html>
