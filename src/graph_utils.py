@@ -29,7 +29,7 @@ def generate_graph_data(patient_id):
         "timestamp": v.timestamp.isoformat()
     } for v in vitals]
     
-    patient = db.query(Patient).get(patient_id)
+    patient = db.query(Patient).filter_by(id=patient_id).first()
     thresholds = get_threshold_range(patient)
 
     return {

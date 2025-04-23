@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Details</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="frontend/styles.css">
 </head>
 <body>
     <div class="login-container">
@@ -14,15 +14,15 @@
             <input type="text" id="patient-id" name="patient-id" placeholder="Enter Patient ID" required>
             
             <div class="buttons">
-                <button type="button" class="btn display-graphs">Display Graphs</button>
+                <button type="button" class="btn display-graphs" id="display-graphs-btn">Display Graphs</button>
                 <button type="button" class="btn logout">Logout</button>
             </div>
         </form>
     </div>
     
     <script>
-        // Waits for the form to be submitted
-        document.getElementById('nurse-form').addEventListener('submit', async function(e) {
+        // Waits for the button to be clicked
+        document.getElementById('display-graphs-btn').addEventListener('click', async function(e) {
             e.preventDefault(); // Prevent the default page reload
             
             const patientId = document.getElementById('patient-id').value; // Get the entered patient ID
@@ -38,13 +38,14 @@
             });
 
             // If the server redirects us (e.g., to the graphs page), follow that
-            if (response.redirected) {
-                window.location.href = response.url;
-            } else {
-                // Otherwise, show any error or confirmation
-                const data = await response.json();
-                alert(data.error || data.message);
-            }
+            const data = await response.json();
+            if (data.redirect) {
+                window.location.href = data.redirect;
+            } 
+            // Otherwise, show any error or confirmation 
+            else {
+                alert(data.error || data.message || "Unknown error occurred.");
+            }                
         });
     </script>
 </body>

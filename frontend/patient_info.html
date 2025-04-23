@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Information</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="frontend/styles.css">
 </head>
 <body>
     <div class="patient-container">
@@ -16,19 +16,19 @@
             <div class="info-grid">
                 <div class="info-item">
                     <label>Full Name:</label>
-                    <div class="info-value">John Michael Doe</div>
+                    <div class="info-value" id="full-name">{{ patient_info.name }}</div>
                 </div>
                 <div class="info-item">
                     <label>Date of Birth:</label>
-                    <div class="info-value">05/15/1982 (Age 41)</div>
+                    <div class="info-value" id="dob">{{ patient_info.dob.strftime('%Y-%m-%d') }}</div>
                 </div>
                 <div class="info-item">
                     <label>Gender:</label>
-                    <div class="info-value">Male</div>
+                    <div class="info-value" id="gender">{{ patient_info.gender }}</div>
                 </div>
                 <div class="info-item">
                     <label>Patient ID:</label>
-                    <div class="info-value">P-2847392</div>
+                    <div class="info-value" id="patient-id">{{ patient_info.id }}</div>
                 </div>
             </div>
         </div>
@@ -39,15 +39,15 @@
             <div class="info-grid">
                 <div class="info-item">
                     <label>Phone Number:</label>
-                    <div class="info-value">(555) 123-4567</div>
+                    <div class="info-value" id="primary-phone">{{patient_info.primary_contact}}</div>
                 </div>
                 <div class="info-item">
                     <label>Secondary Phone:</label>
-                    <div class="info-value">(555) 987-6543</div>
+                    <div class="info-value" id="secondary-phone">{{patient_info.secondary_contact}}</div>
                 </div>
                 <div class="info-item">
                     <label>Email:</label>
-                    <div class="info-value">john.doe@example.com</div>
+                    <div class="info-value" id="email"></div>
                 </div>
             </div>
         </div>
@@ -58,15 +58,15 @@
             <div class="info-grid">
                 <div class="info-item">
                     <label>Name:</label>
-                    <div class="info-value">Jane Doe</div>
+                    <div class="info-value" id="emergency-name">{{patient_info.emergency_contact.name}}</div>
                 </div>
                 <div class="info-item">
                     <label>Relationship:</label>
-                    <div class="info-value">Spouse</div>
+                    <div class="info-value" id="emergency-relationship">{{patient_info.emergency_contact.relation}}</div>
                 </div>
                 <div class="info-item">
                     <label>Phone Number:</label>
-                    <div class="info-value">(555) 234-5678</div>
+                    <div class="info-value" id="emergency-phone">{{patient_info.emergency_contact.contact}}</div>
                 </div>
             </div>
         </div>
@@ -77,19 +77,23 @@
             <div class="info-grid medical-grid">
                 <div class="info-item">
                     <label>Allergies:</label>
-                    <div class="info-value">Penicillin, Peanuts</div>
+                    <div class="info-value">
+                        <ul id="allergies-list">
+                            <!-- The allergies will be populated here dynamically -->
+                             {{ patient_info.allergies| join(", ") }}
+                        </ul>
+                    </div>
                 </div>
                 <div class="info-item">
                     <label>Chronic Conditions:</label>
-                    <div class="info-value">Type 2 Diabetes, Hypertension</div>
+                    <div class="info-value" id="chronic-conditions">{{ patient_info.previous_conditions | join(", ") }}</div>
                 </div>
                 <div class="info-item">
                     <label>Current Medications:</label>
                     <div class="info-value">
-                        <ul>
-                            <li>Metformin 500mg - Twice daily</li>
-                            <li>Lisinopril 10mg - Daily</li>
-                            <li>Atorvastatin 20mg - At bedtime</li>
+                        <ul id="medications-list">
+                            <!-- Medications will be populated here dynamically -->
+                            {{ patient_info.medications | join(", ") }}
                         </ul>
                     </div>
                 </div>
@@ -102,49 +106,108 @@
             <div class="info-grid">
                 <div class="info-item">
                     <label>Date of Admission:</label>
-                    <div class="info-value">11/15/2023</div>
+                    <div class="info-value" id="admission-date">{{patient_info.admission_date.strftime('%Y-%m-%d')}}</div>
                 </div>
                 <div class="info-item">
                     <label>Expected Discharge:</label>
-                    <div class="info-value">11/20/2023</div>
+                    <div class="info-value" id="discharge-date">{{patient_info.discharge_date.strftime('%Y-%m-%d')}}</div>
                 </div>
                 <div class="info-item">
                     <label>Assigned Doctor:</label>
-                    <div class="info-value">Dr. Sarah Williams (Cardiology)</div>
+                    <div class="info-value" id="assigned-doctor">{{patient_info.staff.primary_doctor}}</div>
                 </div>
                 <div class="info-item">
-                    <label>Room/Bed:</label>
-                    <div class="info-value">Room 304, Bed A</div>
+                    <label>Department:</label>
+                    <div class="info-value" id="room-bed">{{patient_info.department}}</div>
                 </div>
             </div>
         </div>
 
         <div class="action-buttons">
-            <button class="btn back-btn">Back</button>
+            <button class="btn back-btn" id="go-back-btn">Back</button>
         </div>
     </div>
 
     <script>
         // Fetch and display patient information
-        async function fetchPatientInfo() {
-            const response = await fetch('/patient_info');  // Backend endpoint to fetch patient details
-            const data = await response.json();
+        console.log("Script loaded successfully");
 
-            if (data) {
-                // Populate the patient information fields
-                document.getElementById('full-name').textContent = data.full_name;
-                document.getElementById('dob').textContent = data.dob;
-                document.getElementById('gender').textContent = data.gender;
-                document.getElementById('patient-id').textContent = data.patient_id;
-                document.getElementById('emergency-name').textContent = data.emergency_contact.name;
-                document.getElementById('emergency-relationship').textContent = data.emergency_contact.relationship;
-                document.getElementById('emergency-phone').textContent = data.emergency_contact.phone;
-            } else {
-                alert("No patient information available.");
+        async function fetchPatientInfo() {
+            try {
+                const response = await fetch('/patient_info');  // Backend endpoint to fetch patient details
+                const data = await response.json();
+        
+                if (data) {
+                    // Populate the patient information fields
+                    document.getElementById('full-name').textContent = data.name || 'N/A';
+                    document.getElementById('dob').textContent = `${data.dob || 'N/A'} (Age ${data.age || 'N/A'})`;
+                    document.getElementById('gender').textContent = data.gender || 'N/A';
+                    document.getElementById('patient-id').textContent = data.patient_id || 'N/A';
+                    document.getElementById('primary-phone').textContent = data.primary_contact || 'N/A';
+                    document.getElementById('secondary-phone').textContent = data.secondary_contact || 'N/A';
+                    document.getElementById('email').textContent = data.email || 'N/A';
+                    document.getElementById('emergency-name').textContent = data.emergency_contact.name || 'N/A';
+                    document.getElementById('emergency-relationship').textContent = data.emergency_contact.relation || 'N/A';
+                    document.getElementById('emergency-phone').textContent = data.emergency_contact.contact || 'N/A';
+                    
+                    // Display Allergies as a List
+                    const allergiesList = document.getElementById('allergies-list');
+                    if (data.allergies && data.allergies.length > 0) {
+                        data.allergies.forEach(allergy => {
+                            const li = document.createElement('li');
+                            li.textContent = allergy;
+                            allergiesList.appendChild(li);
+                        });
+                    } else {
+                        allergiesList.innerHTML = '<li>No allergies recorded</li>';
+                    }
+        
+                    // Chronic Conditions (if applicable)
+                    document.getElementById('chronic-conditions').textContent = data.previous_conditions ? data.previous_conditions.join(', ') : 'N/A';
+        
+                    // Medications
+                    const medicationsList = document.getElementById('medications-list');
+                    if (data.medications && data.medications.length > 0) {
+                        data.medications.forEach(med => {
+                            const li = document.createElement('li');
+                            li.textContent = med;
+                            medicationsList.appendChild(li);
+                        });
+                    } else {
+                        medicationsList.innerHTML = '<li>No current medications</li>';
+                    }
+        
+                    document.getElementById('admission-date').textContent = data.admission_date || 'N/A';
+                    document.getElementById('discharge-date').textContent = data.discharge_date || 'N/A';
+                    document.getElementById('assigned-doctor').textContent = `${data.staff.primary_doctor || 'N/A'} (Primary)`;
+                    document.getElementById('room-bed').textContent = `${data.room || 'N/A'}, ${data.bed || 'N/A'}`;
+                } else {
+                    alert("No patient information available.");
+                }
+            } catch (error) {
+                console.error('Error fetching patient info:', error);
             }
         }
+        
+        fetchPatientInfo();  // Call function to fetch patient info when page loads     
+        
+        document.getElementById('go-back-btn').addEventListener('click', async function(e) {
+            e.preventDefault();
 
-        fetchPatientInfo();  // Call function to fetch patient info when page loads
+            const response = await fetch('/patient_info', {
+                method: 'POST'
+            });
+
+            // If redirected by the backend, follow it
+            const data = await response.json();
+            if (data.redirect) {
+                window.location.href = data.redirect;
+            } 
+            // Otherwise, show any error or confirmation 
+            else {
+                alert(data.error || data.message || "Unknown error occurred.");
+            }
+        });
     </script>
 </body>
 </html>

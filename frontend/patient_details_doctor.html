@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Details</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="frontend/styles.css">
 </head>
 <body>
     <div class="login-container">
@@ -14,50 +14,90 @@
             <input type="text" id="patient-id" name="patient-id" placeholder="Enter Patient ID" required>
             
             <div class="buttons">
-                <button type="button" class="btn display-graphs">Display Graphs</button>
-                <button type="button" class="btn view-details">View Details</button>
-                <button type="button" class="btn logout">Logout</button>
+                <button type="button" class="btn display-graphs" id="display-graphs-btn">Display Graphs</button>
+                <button type="button" class="btn view-details" id="view-details-btn">View Details</button>
+                <button type="button" class="btn logout" id="logout-btn">Logout</button>
             </div>
         </form>
     </div>
     <script>
-        // Get form and input field elements
-        const form = document.getElementById('doctor-form');
-        const input = document.getElementById('patient-id');
-    
-        // Loop through all buttons with the class 'btn'
-        document.querySelectorAll('.btn').forEach(btn => {
-            // Add click event listener to each button
-            btn.addEventListener('click', async (e) => {
-                const action = btn.getAttribute('data-action'); // Get the action type from the button
-    
-                // If no action is defined, do nothing
-                if (!action) return;
-    
-                const patientId = input.value; // Get the entered patient ID
-    
-                // If no patient ID is entered, show an alert and stop
-                if (!patientId) {
-                    alert("Please enter a Patient ID.");
-                    return;
-                }
-    
-                // Send POST request with patient ID and action
-                const response = await fetch('/patient_details_doctor', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ patient_id: patientId, action })
-                });
-    
-                // Redirect if response is a redirect
-                if (response.redirected) {
-                    window.location.href = response.url;
-                } else {
-                    // Show error or message from response
-                    const data = await response.json();
-                    alert(data.error || data.message);
-                }
+        // Waits for the button to be clicked
+        document.getElementById('display-graphs-btn').addEventListener('click', async function(e) {
+            e.preventDefault(); // Prevent the default page reload
+            
+            const patientId = document.getElementById('patient-id').value; // Get the entered patient ID
+
+            // Send a POST request to the Flask backend
+            const response = await fetch('/patient_details_doctor', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    patient_id: patientId,   // patient ID from form
+                    action: 'show_vitals'    // specify action (this tells Flask what to do)
+                })
             });
+
+            // If the server redirects us (e.g., to the graphs page), follow that
+            const data = await response.json();
+            if (data.redirect) {
+                window.location.href = data.redirect;
+            } 
+            // Otherwise, show any error or confirmation 
+            else {
+                alert(data.error || data.message || "Unknown error occurred.");
+            }                
+        });
+
+        document.getElementById('view-details-btn').addEventListener('click', async function(e) {
+            e.preventDefault(); // Prevent the default page reload
+            
+            const patientId = document.getElementById('patient-id').value; // Get the entered patient ID
+
+            // Send a POST request to the Flask backend
+            const response = await fetch('/patient_details_doctor', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    patient_id: patientId,   // patient ID from form
+                    action: 'patient_history'    // specify action (this tells Flask what to do)
+                })
+            });
+
+            // If the server redirects us (e.g., to the graphs page), follow that
+            const data = await response.json();
+            if (data.redirect) {
+                window.location.href = data.redirect;
+            } 
+            // Otherwise, show any error or confirmation 
+            else {
+                alert(data.error || data.message || "Unknown error occurred.");
+            }                
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', async function(e) {
+            e.preventDefault(); // Prevent the default page reload
+            
+            const patientId = document.getElementById('patient-id').value; // Get the entered patient ID
+
+            // Send a POST request to the Flask backend
+            const response = await fetch('/patient_details_doctor', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    patient_id: patientId,   // patient ID from form
+                    action: 'logout'    // specify action (this tells Flask what to do)
+                })
+            });
+
+            // If the server redirects us (e.g., to the graphs page), follow that
+            const data = await response.json();
+            if (data.redirect) {
+                window.location.href = data.redirect;
+            } 
+            // Otherwise, show any error or confirmation 
+            else {
+                alert(data.error || data.message || "Unknown error occurred.");
+            }                
         });
     </script>       
 </body>

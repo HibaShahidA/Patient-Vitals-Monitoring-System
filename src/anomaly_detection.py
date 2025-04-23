@@ -19,7 +19,21 @@ def get_threshold_range(patient):
         Threshold.gender == gender
     ).first()
     
-    return threshold
+    if threshold:
+        return {
+            "systolic_min": threshold.systolic_lower,
+            "systolic_max": threshold.systolic_upper,
+            "diastolic_min": threshold.diastolic_lower,
+            "diastolic_max": threshold.diastolic_upper,
+            "pulse_rate_min": threshold.pulse_rate_lower,
+            "pulse_rate_max": threshold.pulse_rate_upper,
+            "blood_sugar_min": threshold.blood_sugar_lower,
+            "blood_sugar_max": threshold.blood_sugar_upper,
+            "oxygen_volume_min": threshold.oxygen_levels_lower,
+            "oxygen_volume_max": threshold.oxygen_levels_upper
+        }
+    else:
+        return {}
 
 def detect_anomalies(patients):
     for patient in patients:
