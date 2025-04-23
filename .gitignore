@@ -1,0 +1,8 @@
+__pycache__/
+frontend/
+notes
+pvms.pdf
+src/patient_vitals.db
+src/query_test.py
+src/report_details.py
+src/pvms.pdf
