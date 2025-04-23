@@ -352,7 +352,6 @@ h1 {
     margin-bottom: 15px;
 }
 
-<<<<<<< HEAD:styles.css
 .info-item label {
     display: block;
     font-weight: 600;
@@ -414,7 +413,6 @@ h1 {
         font-size: 24px;
     }
 }
-=======
 .graph-placeholder {
     height: 200px;
     background: #aaccdd;
@@ -426,4 +424,16 @@ h1 {
     color: #aaccdd;
     font-weight: bold;
 }
->>>>>>> 7b706417342a614347416c3b8061de61e9ca166c:frontend/styles.css
+
+/* Ensure the body and html tags allow scrolling */
+html, body {
+    height: 100%; /* Full height for both elements */
+    margin: 0; /* Remove default margin */
+    overflow-y: auto; /* Allow vertical scrolling */
+  }
+  
+  /* Ensure the main container is scrollable if it overflows */
+  .patient-container {
+    max-height: 90vh; /* 90% of the viewport height */
+    overflow-y: auto; /* Enable vertical scrolling */
+  }

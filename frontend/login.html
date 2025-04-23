@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="frontend/styles.css">
 </head>
 <body>
     <div class="login-container">
         <h1>Welcome</h1>
-        <form>
+        <form id="login-form">
             <label for="user-id">ID:</label>
             <input type="text" id="user-id" name="user-id" placeholder="Enter your ID" required>
             
@@ -18,6 +18,8 @@
             
             <button type="submit" class="btn login-btn">Login</button>
         </form>
+
+        <p id="error-message" style="color: red; margin-top: 10px;"></p>
     </div>
 
     <!-- ✅ JavaScript goes here -->
@@ -42,11 +44,10 @@
             });
     
             // If Flask responds with a redirect (e.g., successful login → doctor or nurse page)
-            if (response.redirected) {
-                window.location.href = response.url; // Follow the redirect
+            const result = await response.json();
+            if (result.redirect) {
+                window.location.href = result.redirect; // Follow the redirect
             } else {
-                // Otherwise, the login failed — get the error message from the response JSON
-                const result = await response.json();
                 // Show the error in the designated message area (e.g., under the form)
                 errorMessage.textContent = result.error || 'Login failed';
             }

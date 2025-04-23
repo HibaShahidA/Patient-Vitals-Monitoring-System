@@ -28,8 +28,22 @@ def fetch_patient_details(patient_id):
             emerg_contact_name = emerg_contact_relation = emerg_contact_contact = None
 
         # History
-        allergies = patient.history.allergies if patient.history else None
-        prev_conditions = patient.history.prev_conditions if patient.history else None
+        if patient.history:
+            allergies_list = []  # To hold all allergies
+            prev_conditions = []  # To hold all previous conditions
+            
+            for history in patient.history:
+                # If allergies are present, add them to the list
+                if history.allergies:
+                    # print(history.allergies)
+                    allergies_list.append(history.allergies) # Multiple allergies
+                if history.prev_conditions:
+                    prev_conditions.append(history.prev_conditions)  # Append previous conditions
+
+            allergies = allergies_list if allergies_list else None
+            prev_conditions = prev_conditions if prev_conditions else None
+        else:
+            allergies = prev_conditions = None
 
         # Medications (getting a list of medicine names)
         meds = [med.medicine.name for med in patient.medications]
@@ -39,15 +53,6 @@ def fetch_patient_details(patient_id):
         sec_doc = next((s.staff.name for s in patient.staff_assignments if s.role == "secondary"), None)
         head_nurse = next((s.staff.name for s in patient.staff_assignments if s.role == "backup"), None)
 
-        for assignment in patient.staff_assignments:
-            role = assignment.role
-            staff_member = assignment.staff
-            if role == "primary_doctor":
-                prim_doc = staff_member.name
-            elif role == "secondary_doctor":
-                sec_doc = staff_member.name
-            elif role == "head_nurse":
-                head_nurse = staff_member.name
     else:
         print("Patient not found.")
         
@@ -55,6 +60,7 @@ def fetch_patient_details(patient_id):
         "name": name,
         "dob": dob,
         "gender": gender,
+        "id": patient_id,
         "primary_contact": prim_phone,
         "secondary_contact": sec_phone,
         "admission_date": admission_date,
@@ -65,7 +71,7 @@ def fetch_patient_details(patient_id):
             "relation": emerg_contact_relation,
             "contact": emerg_contact_contact
         },
-        "allergies": allergies,
+        "allergies": allergies,  # This is now a list of allergies
         "previous_conditions": prev_conditions,
         "medications": meds,
         "staff": {
@@ -74,5 +80,3 @@ def fetch_patient_details(patient_id):
             "head_nurse": head_nurse
         }
     }
-
-    

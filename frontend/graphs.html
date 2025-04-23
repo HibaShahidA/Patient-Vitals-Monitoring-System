@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Monitoring</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="frontend/styles.css">
 </head>
 <body>
     <div class="compact-container">
@@ -19,46 +19,194 @@
         <div class="graph-grid-horizontal">
             <div class="graph-section">
                 <h2 class="graph-title">Glucose Levels</h2>
-                <div class="graph-display" id="glucose-chart-1"></div>
+                <div class="graph-display">
+                    <canvas id="glucose-chart"></canvas>
+                </div>
             </div>
             <div class="graph-section">
-                <h2 class="graph-title">Glucose Trends</h2>
-                <div class="graph-display" id="glucose-chart-2"></div>
+                <h2 class="graph-title">Blood Pressure</h2>
+                <div class="graph-display">
+                    <canvas id="pressure-chart"></canvas>
+                </div>
             </div>
             <div class="graph-section">
-                <h2 class="graph-title">Glucose History</h2>
-                <div class="graph-display" id="glucose-chart-3"></div>
+                <h2 class="graph-title">Pulse Rate</h2>
+                <div class="graph-display">
+                    <canvas id="pulse-chart"></canvas>
+                </div>
             </div>
             <div class="graph-section">
-                <h2 class="graph-title">Breathing Rate</h2>
-                <div class="graph-display" id="breathing-chart"></div>
+                <h2 class="graph-title">Oxygen Volume</h2>
+                <div class="graph-display">
+                    <canvas id="breathing-chart"></canvas>
+                </div>
             </div>
-        </div>
+        </div>        
 
         <div class="action-buttons">
             <button class="btn go-back">Go Back</button>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Real-time clock with AM/PM
-        function updateDateTime() {
-            const now = new Date();
-            document.getElementById('current-date').textContent = 
-                `${now.getMonth()+1}/${now.getDate()}/${now.getFullYear()}`;
+        async function loadVitals() {
+            const res = await fetch('/graph', {
+                method: 'GET'
+            });
+            const data = await res.json();
             
-            let hours = now.getHours();
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12;
-            hours = hours ? hours : 12;
-            const minutes = now.getMinutes().toString().padStart(2, '0');
-            const seconds = now.getSeconds().toString().padStart(2, '0');
+            console.log(data);
+    
+            if (!res.ok) {
+                alert(data.message || "Failed to load vitals");
+                return;
+            }
+        
+            document.getElementById('patient-name').textContent = data.patient_name;
+        
+            const timestamps = data.vitals.map(v => new Date(v.timestamp));
+            const glucoseValues = data.vitals.map(v => v.blood_sugar);
+            const systolicValues = data.vitals.map(v => v.systolic); // For Blood Pressure
+            const diastolicValues = data.vitals.map(v => v.diastolic); // For Blood Pressure
+            const pulseRateValues = data.vitals.map(v => v.pulse_rate);
+            const oxygenVolumeValues = data.vitals.map(v => v.oxygen_volume);
             
-            document.getElementById('current-time').textContent = 
-                `${hours}:${minutes}:${seconds} ${ampm}`;
+            const { glucose, blood_pressure, pulse_rate, oxygen_volume } = data.thresholds;
+        
+            // Glucose Levels Graph
+            new Chart(document.getElementById("glucose-chart"), {
+                type: 'line',
+                data: {
+                    labels: timestamps,
+                    datasets: [
+                        {
+                            label: "Blood Sugar",
+                            data: glucoseValues,
+                            borderColor: 'red',
+                            fill: false
+                        },
+                        {
+                            label: "Upper Bound",
+                            data: timestamps.map(() => glucose[1]),
+                            borderColor: 'blue',
+                            borderDash: [5, 5],
+                            fill: false
+                        },
+                        {
+                            label: "Lower Bound",
+                            data: timestamps.map(() => glucose[0]),
+                            borderColor: 'blue',
+                            borderDash: [5, 5],
+                            fill: false
+                        }
+                    ]
+                }
+            });
+        
+            // Blood Pressure Graph (Systolic and Diastolic)
+            new Chart(document.getElementById("pressure-chart"), {
+                type: 'line',
+                data: {
+                    labels: timestamps,
+                    datasets: [
+                        {
+                            label: "Systolic",
+                            data: systolicValues,
+                            borderColor: 'green',
+                            fill: false
+                        },
+                        {
+                            label: "Diastolic",
+                            data: diastolicValues,
+                            borderColor: 'orange',
+                            fill: false
+                        },
+                        {
+                            label: "Upper Bound (Systolic)",
+                            data: timestamps.map(() => blood_pressure[1]),
+                            borderColor: 'blue',
+                            borderDash: [5, 5],
+                            fill: false
+                        },
+                        {
+                            label: "Lower Bound (Diastolic)",
+                            data: timestamps.map(() => blood_pressure[0]),
+                            borderColor: 'blue',
+                            borderDash: [5, 5],
+                            fill: false
+                        }
+                    ]
+                }
+            });
+        
+            // Pulse Rate Graph
+            new Chart(document.getElementById("pulse-chart"), {
+                type: 'line',
+                data: {
+                    labels: timestamps,
+                    datasets: [
+                        {
+                            label: "Pulse Rate",
+                            data: pulseRateValues,
+                            borderColor: 'purple',
+                            fill: false
+                        },
+                        {
+                            label: "Upper Bound",
+                            data: timestamps.map(() => pulse_rate[1]),
+                            borderColor: 'blue',
+                            borderDash: [5, 5],
+                            fill: false
+                        },
+                        {
+                            label: "Lower Bound",
+                            data: timestamps.map(() => pulse_rate[0]),
+                            borderColor: 'blue',
+                            borderDash: [5, 5],
+                            fill: false
+                        }
+                    ]
+                }
+            });
+        
+            // Oxygen Volume Graph
+            new Chart(document.getElementById("breathing-chart"), {
+                type: 'line',
+                data: {
+                    labels: timestamps,
+                    datasets: [
+                        {
+                            label: "Oxygen Volume",
+                            data: oxygenVolumeValues,
+                            borderColor: 'teal',
+                            fill: false
+                        },
+                        {
+                            label: "Upper Bound",
+                            data: timestamps.map(() => oxygen_volume[1]),
+                            borderColor: 'blue',
+                            borderDash: [5, 5],
+                            fill: false
+                        },
+                        {
+                            label: "Lower Bound",
+                            data: timestamps.map(() => oxygen_volume[0]),
+                            borderColor: 'blue',
+                            borderDash: [5, 5],
+                            fill: false
+                        }
+                    ]
+                }
+            });
         }
-        updateDateTime();
-        setInterval(updateDateTime, 1000);
-    </script>
+    
+        // Call loadVitals every 1 second (1000 milliseconds)
+        setInterval(loadVitals, 1000);
+    
+        // Initial call to loadVitals when the page is loaded
+        loadVitals();
+    </script>    
+
 </body>
 </html>
