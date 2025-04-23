@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Denied</title>
+    <link rel="stylesheet" href="frontend/styles.css">
+</head>
+<body>
+    <div class="login-container alert-style">
+        <h1 class="alert-title">UNAUTHORIZED ACCESS</h1>
+        <div class="alert-message">
+            <h2>Access Denied!</h2>
+            <p>You are not authorized to view this patient's details</p>
+        </div>
+        <button class="btn go-back" id="go-back-btn">Go Back</button>
+    </div>
+    <script>
+        document.getElementById('go-back-btn').addEventListener('click', async function(e) {
+            e.preventDefault();
+
+            const response = await fetch('/access_denied', {
+                method: 'POST'
+            });
+
+            // If redirected by the backend, follow it
+            const data = await response.json();
+            if (data.redirect) {
+                window.location.href = data.redirect;
+            } 
+            // Otherwise, show any error or confirmation 
+            else {
+                alert(data.error || data.message || "Unknown error occurred.");
+            }
+        });
+    </script>
+</body>
+</html>
