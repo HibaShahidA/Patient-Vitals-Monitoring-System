@@ -20,5 +20,45 @@
             </div>
         </form>
     </div>
+    <script>
+        // Get form and input field elements
+        const form = document.getElementById('doctor-form');
+        const input = document.getElementById('patient-id');
+    
+        // Loop through all buttons with the class 'btn'
+        document.querySelectorAll('.btn').forEach(btn => {
+            // Add click event listener to each button
+            btn.addEventListener('click', async (e) => {
+                const action = btn.getAttribute('data-action'); // Get the action type from the button
+    
+                // If no action is defined, do nothing
+                if (!action) return;
+    
+                const patientId = input.value; // Get the entered patient ID
+    
+                // If no patient ID is entered, show an alert and stop
+                if (!patientId) {
+                    alert("Please enter a Patient ID.");
+                    return;
+                }
+    
+                // Send POST request with patient ID and action
+                const response = await fetch('/patient_details_doctor', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ patient_id: patientId, action })
+                });
+    
+                // Redirect if response is a redirect
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else {
+                    // Show error or message from response
+                    const data = await response.json();
+                    alert(data.error || data.message);
+                }
+            });
+        });
+    </script>       
 </body>
 </html>

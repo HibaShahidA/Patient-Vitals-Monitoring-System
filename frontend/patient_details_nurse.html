@@ -19,5 +19,33 @@
             </div>
         </form>
     </div>
+    
+    <script>
+        // Waits for the form to be submitted
+        document.getElementById('nurse-form').addEventListener('submit', async function(e) {
+            e.preventDefault(); // Prevent the default page reload
+            
+            const patientId = document.getElementById('patient-id').value; // Get the entered patient ID
+
+            // Send a POST request to the Flask backend
+            const response = await fetch('/patient_details_nurse', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    patient_id: patientId,   // patient ID from form
+                    action: 'show_vitals'    // specify action (this tells Flask what to do)
+                })
+            });
+
+            // If the server redirects us (e.g., to the graphs page), follow that
+            if (response.redirected) {
+                window.location.href = response.url;
+            } else {
+                // Otherwise, show any error or confirmation
+                const data = await response.json();
+                alert(data.error || data.message);
+            }
+        });
+    </script>
 </body>
 </html>
