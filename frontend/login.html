@@ -22,8 +22,37 @@
 
     <!-- ✅ JavaScript goes here -->
     <script>
-        
+        // Attach a 'submit' event listener to the login form
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent the form from submitting normally (page reload)
+    
+            // Grab the values entered by the user in the login form
+            const staff_id = document.getElementById('user-id').value;     // Staff ID input
+            const password = document.getElementById('password').value;     // Password input
+            const errorMessage = document.getElementById('error-message');  // Paragraph/div for showing error
+    
+            // Send the login data to the Flask backend using fetch
+            const response = await fetch('/login', {
+                method: 'POST', // Send POST request
+                headers: {
+                    'Content-Type': 'application/json' // Sending JSON data
+                },
+                credentials: 'same-origin',  
+                body: JSON.stringify({ staff_id, password }) // Payload containing login credentials
+            });
+    
+            // If Flask responds with a redirect (e.g., successful login → doctor or nurse page)
+            if (response.redirected) {
+                window.location.href = response.url; // Follow the redirect
+            } else {
+                // Otherwise, the login failed — get the error message from the response JSON
+                const result = await response.json();
+                // Show the error in the designated message area (e.g., under the form)
+                errorMessage.textContent = result.error || 'Login failed';
+            }
+        });
     </script>
+    
 
 </body>
 </html>
