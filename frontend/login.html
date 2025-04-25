@@ -45,6 +45,7 @@
     
             // If Flask responds with a redirect (e.g., successful login → doctor or nurse page)
             const result = await response.json();
+            console.log(result)
             if (result.redirect) {
                 window.location.href = result.redirect; // Follow the redirect
             } else {

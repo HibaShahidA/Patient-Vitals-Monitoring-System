@@ -66,13 +66,13 @@ def patient_details_nurse():
             return jsonify({'redirect': '/login'})
         
         if action == 'acknowledge_alert':
-            return jsonify({'redirect': '/graph'})
+            return jsonify({'redirect': '/graphs'})
         
         if is_authorized_for_patient(staff_id, patient_id):
             if action == 'show_vitals':
                 # redirect to vitals display page (graph)
                 session['patient_id'] = patient_id
-                return jsonify({'redirect': '/graph'})
+                return jsonify({'redirect': '/graphs'})
             else:
                 # redirect to login.html page
                 return jsonify({'redirect': '/login'})
@@ -102,13 +102,13 @@ def patient_details_doctor():
             return jsonify({'redirect': '/login'})
         
         if action == 'acknowledge_alert':
-            return jsonify({'redirect': '/graph'})
+            return jsonify({'redirect': '/graphs'})
         
         if is_authorized_for_patient(staff_id, patient_id):
             if action == "show_vitals":
                 # redirect to vitals display page (graph)
                 session['patient_id'] = patient_id
-                return jsonify({'redirect': '/graph'})
+                return jsonify({'redirect': '/graphs'})
                 
             elif action == "patient_history":
                 # redirect to patient_info page
@@ -127,7 +127,12 @@ def patient_details_doctor():
         return render_template('patient_details_doctor.html')
     
         
-@app.route('/graph', methods=['GET']) 
+@app.route('/graphs', methods=['GET']) 
+def graphs_page():
+    return render_template('graphs.html')
+
+
+@app.route('/get_vitals', methods=['GET'])
 def display_vitals():
     patient_id = session.get('patient_id')
     
