@@ -45,181 +45,198 @@
         </div>        
 
         <div class="action-buttons">
-            <button class="btn go-back">Go Back</button>
+            <button class="btn go-back" id="go-back-btn">Go Back</button>
         </div>
     </div>
 
     <script>
-        // Store chart instances
-        let glucoseChart = null;
-        let pressureChart = null;
-        let pulseChart = null;
-        let breathingChart = null;
-    
-        async function loadVitals() {
-            const res = await fetch('/get_vitals');
-            const data = await res.json();
-    
-            if (!res.ok) {
-                alert(data.message || "Failed to load vitals");
-                return;
-            }
-    
-            document.getElementById('patient-name').textContent = data.patient_name;
-    
-            const timestamps = data.vitals.map(v => {
-                const t = new Date(v.timestamp);
-                return t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            });
-            
-            const glucoseValues = data.vitals.map(v => v.blood_sugar);
-            const systolicValues = data.vitals.map(v => v.systolic);
-            const diastolicValues = data.vitals.map(v => v.diastolic);
-            const pulseRateValues = data.vitals.map(v => v.pulse_rate);
-            const oxygenVolumeValues = data.vitals.map(v => v.oxygen_volume);
-    
-            const thresholds = data.thresholds || {};
-            const glucose = thresholds.glucose || [null, null];
-            const blood_pressure = thresholds.blood_pressure || [null, null];
-            const pulse_rate = thresholds.pulse_rate || [null, null];
-            const oxygen_volume = thresholds.oxygen_volume || [null, null];
-    
-            // Destroy existing charts if they exist
-            if (glucoseChart) glucoseChart.destroy();
-            if (pressureChart) pressureChart.destroy();
-            if (pulseChart) pulseChart.destroy();
-            if (breathingChart) breathingChart.destroy();
-    
-            // Glucose Chart
-            glucoseChart = new Chart(document.getElementById("glucose-chart"), {
-                type: 'line',
-                data: {
-                    labels: timestamps,
-                    datasets: [
-                        {
-                            label: "Blood Sugar",
-                            data: glucoseValues,
-                            borderColor: 'red',
-                            fill: false
-                        },
-                        {
-                            label: "Upper Bound",
-                            data: timestamps.map(() => glucose[1]),
-                            borderColor: 'blue',
-                            borderDash: [5, 5],
-                            fill: false
-                        },
-                        {
-                            label: "Lower Bound",
-                            data: timestamps.map(() => glucose[0]),
-                            borderColor: 'blue',
-                            borderDash: [5, 5],
-                            fill: false
-                        }
-                    ]
-                }
-            });
-    
-            // Blood Pressure Chart
-            pressureChart = new Chart(document.getElementById("pressure-chart"), {
-                type: 'line',
-                data: {
-                    labels: timestamps,
-                    datasets: [
-                        {
-                            label: "Systolic",
-                            data: systolicValues,
-                            borderColor: 'green',
-                            fill: false
-                        },
-                        {
-                            label: "Diastolic",
-                            data: diastolicValues,
-                            borderColor: 'orange',
-                            fill: false
-                        },
-                        {
-                            label: "Upper Bound (Systolic)",
-                            data: timestamps.map(() => blood_pressure[1]),
-                            borderColor: 'blue',
-                            borderDash: [5, 5],
-                            fill: false
-                        },
-                        {
-                            label: "Lower Bound (Diastolic)",
-                            data: timestamps.map(() => blood_pressure[0]),
-                            borderColor: 'blue',
-                            borderDash: [5, 5],
-                            fill: false
-                        }
-                    ]
-                }
-            });
-    
-            // Pulse Rate Chart
-            pulseChart = new Chart(document.getElementById("pulse-chart"), {
-                type: 'line',
-                data: {
-                    labels: timestamps,
-                    datasets: [
-                        {
-                            label: "Pulse Rate",
-                            data: pulseRateValues,
-                            borderColor: 'purple',
-                            fill: false
-                        },
-                        {
-                            label: "Upper Bound",
-                            data: timestamps.map(() => pulse_rate[1]),
-                            borderColor: 'blue',
-                            borderDash: [5, 5],
-                            fill: false
-                        },
-                        {
-                            label: "Lower Bound",
-                            data: timestamps.map(() => pulse_rate[0]),
-                            borderColor: 'blue',
-                            borderDash: [5, 5],
-                            fill: false
-                        }
-                    ]
-                }
-            });
-    
-            // Oxygen Volume Chart
-            breathingChart = new Chart(document.getElementById("breathing-chart"), {
-                type: 'line',
-                data: {
-                    labels: timestamps,
-                    datasets: [
-                        {
-                            label: "Oxygen Volume",
-                            data: oxygenVolumeValues,
-                            borderColor: 'teal',
-                            fill: false
-                        },
-                        {
-                            label: "Upper Bound",
-                            data: timestamps.map(() => oxygen_volume[1]),
-                            borderColor: 'blue',
-                            borderDash: [5, 5],
-                            fill: false
-                        },
-                        {
-                            label: "Lower Bound",
-                            data: timestamps.map(() => oxygen_volume[0]),
-                            borderColor: 'blue',
-                            borderDash: [5, 5],
-                            fill: false
-                        }
-                    ]
-                }
-            });
+    // Store chart instances
+    let glucoseChart = null;
+    let pressureChart = null;
+    let pulseChart = null;
+    let breathingChart = null;
+
+    async function loadVitals() {
+        const res = await fetch('/get_vitals');
+        const data = await res.json();
+
+        if (!res.ok) {
+            alert(data.message || "Failed to load vitals");
+            return;
         }
-    
-        setInterval(loadVitals, 1000);
-        loadVitals();
-    </script>
+
+        document.getElementById('patient-name').textContent = data.patient_name;
+
+        const timestamps = data.vitals.map(v => {
+            const t = new Date(v.timestamp);
+            return t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        });
+        const glucoseValues = data.vitals.map(v => v.blood_sugar);
+        const systolicValues = data.vitals.map(v => v.systolic);
+        const diastolicValues = data.vitals.map(v => v.diastolic);
+        const pulseRateValues = data.vitals.map(v => v.pulse_rate);
+        const oxygenVolumeValues = data.vitals.map(v => v.oxygen_volume);
+
+        const thresholds = data.thresholds || {};
+        const glucose = thresholds.glucose || [null, null];
+        const blood_pressure = thresholds.blood_pressure || [null, null];
+        const pulse_rate = thresholds.pulse_rate || [null, null];
+        const oxygen_volume = thresholds.oxygen_volume || [null, null];
+
+        // Destroy existing charts if they exist
+        if (glucoseChart) glucoseChart.destroy();
+        if (pressureChart) pressureChart.destroy();
+        if (pulseChart) pulseChart.destroy();
+        if (breathingChart) breathingChart.destroy();
+
+        // Glucose Chart
+        glucoseChart = new Chart(document.getElementById("glucose-chart"), {
+            type: 'line',
+            data: {
+                labels: timestamps,
+                datasets: [
+                    {
+                        label: "Blood Sugar",
+                        data: glucoseValues,
+                        borderColor: 'red',
+                        fill: false
+                    },
+                    {
+                        label: "Upper Bound",
+                        data: timestamps.map(() => glucose[1]),
+                        borderColor: 'blue',
+                        borderDash: [5, 5],
+                        fill: false
+                    },
+                    {
+                        label: "Lower Bound",
+                        data: timestamps.map(() => glucose[0]),
+                        borderColor: 'blue',
+                        borderDash: [5, 5],
+                        fill: false
+                    }
+                ]
+            }
+        });
+
+        // Blood Pressure Chart
+        pressureChart = new Chart(document.getElementById("pressure-chart"), {
+            type: 'line',
+            data: {
+                labels: timestamps,
+                datasets: [
+                    {
+                        label: "Systolic",
+                        data: systolicValues,
+                        borderColor: 'green',
+                        fill: false
+                    },
+                    {
+                        label: "Diastolic",
+                        data: diastolicValues,
+                        borderColor: 'orange',
+                        fill: false
+                    },
+                    {
+                        label: "Upper Bound (Systolic)",
+                        data: timestamps.map(() => blood_pressure[1]),
+                        borderColor: 'blue',
+                        borderDash: [5, 5],
+                        fill: false
+                    },
+                    {
+                        label: "Lower Bound (Diastolic)",
+                        data: timestamps.map(() => blood_pressure[0]),
+                        borderColor: 'blue',
+                        borderDash: [5, 5],
+                        fill: false
+                    }
+                ]
+            }
+        });
+
+        // Pulse Rate Chart
+        pulseChart = new Chart(document.getElementById("pulse-chart"), {
+            type: 'line',
+            data: {
+                labels: timestamps,
+                datasets: [
+                    {
+                        label: "Pulse Rate",
+                        data: pulseRateValues,
+                        borderColor: 'purple',
+                        fill: false
+                    },
+                    {
+                        label: "Upper Bound",
+                        data: timestamps.map(() => pulse_rate[1]),
+                        borderColor: 'blue',
+                        borderDash: [5, 5],
+                        fill: false
+                    },
+                    {
+                        label: "Lower Bound",
+                        data: timestamps.map(() => pulse_rate[0]),
+                        borderColor: 'blue',
+                        borderDash: [5, 5],
+                        fill: false
+                    }
+                ]
+            }
+        });
+
+        // Oxygen Volume Chart
+        breathingChart = new Chart(document.getElementById("breathing-chart"), {
+            type: 'line',
+            data: {
+                labels: timestamps,
+                datasets: [
+                    {
+                        label: "Oxygen Volume",
+                        data: oxygenVolumeValues,
+                        borderColor: 'teal',
+                        fill: false
+                    },
+                    {
+                        label: "Upper Bound",
+                        data: timestamps.map(() => oxygen_volume[1]),
+                        borderColor: 'blue',
+                        borderDash: [5, 5],
+                        fill: false
+                    },
+                    {
+                        label: "Lower Bound",
+                        data: timestamps.map(() => oxygen_volume[0]),
+                        borderColor: 'blue',
+                        borderDash: [5, 5],
+                        fill: false
+                    }
+                ]
+            }
+        });
+    }
+
+    setInterval(loadVitals, 1000);
+    loadVitals();
+
+    document.getElementById('go-back-btn').addEventListener('click', async function(e) {
+        e.preventDefault();
+
+        const response = await fetch('/graphs', {
+            method: 'POST'
+        });
+
+        // If redirected by the backend, follow it
+        const data = await response.json();
+        if (data.redirect) {
+            window.location.href = data.redirect;
+        } 
+        // Otherwise, show any error or confirmation 
+        else {
+            alert(data.error || data.message || "Unknown error occurred.");
+        }
+    });
+</script>
             
 
 </body>

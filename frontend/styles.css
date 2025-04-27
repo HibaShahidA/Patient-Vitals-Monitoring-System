@@ -256,8 +256,12 @@ body {
   
   /* ===== ACTION BUTTON ===== */
   .action-buttons {
-    text-align: center;
-    margin-top: 25px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;  /* Center the button */
+    padding: 10px 0;  /* Optional, adds some space around the button */
   }
   
   .btn.go-back {
