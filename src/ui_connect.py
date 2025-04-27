@@ -127,9 +127,24 @@ def patient_details_doctor():
         return render_template('patient_details_doctor.html')
     
         
-@app.route('/graphs', methods=['GET']) 
+@app.route('/graphs', methods=['GET', 'POST']) 
 def graphs_page():
-    return render_template('graphs.html')
+    if request.method == 'POST':
+        referrer = request.referrer
+        if referrer and '/graphs' not in referrer:
+            return jsonify({'redirect': referrer})
+        else:   
+            staff_id = session.get('staff_id')
+            staff = db.query(Staff).filter_by(id=staff_id).first()
+            role = staff.role
+            if role == "doctor":
+                return jsonify({'redirect': '/patient_details_doctor'})
+            elif role == "nurse" or role == "head_nurse":
+                return jsonify({'redirect': '/patient_details_nurse'})
+            else:
+                return jsonify({'redirect': '/login'})
+    else:
+        return render_template('graphs.html')
 
 
 @app.route('/get_vitals', methods=['GET'])
@@ -245,18 +260,18 @@ def check_alerts():
     else:
         return jsonify({"alert": None})
 
-# @app.route('/mark_alert_seen', methods=['POST'])
-# def mark_alert_seen():
-#     data = request.get_json()
-#     alert_id = data.get('alert_id')
+@app.route('/mark_alert_seen', methods=['POST'])
+def mark_alert_seen():
+    data = request.get_json()
+    alert_id = data.get('alert_id')
     
-#     # Fetch the alert from the database
-#     alert = db.query(Alert).filter(Alert.id == alert_id).first()
+    # Fetch the alert from the database
+    alert = db.query(Alert).filter(Alert.id == alert_id).first()
     
-#     if alert:
-#         return jsonify({'message': 'Alert marked as seen', 'redirect': '/graph'})
-#     else:
-#         return jsonify({'error': 'Alert not found'}), 404
+    if alert:
+        return jsonify({'message': 'Alert marked as seen', 'redirect': '/graph'})
+    else:
+        return jsonify({'error': 'Alert not found'}), 404
 
 
 if __name__ == '__main__':
