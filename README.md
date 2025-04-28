@@ -50,6 +50,54 @@ python3 src/ui_connect.py
 
 # Folder Structure
 
+- `frontend/`
+  - `access_denied.html`
+  - `alert.html`
+  - `graphs.html`
+  - `login.html`
+  - `patient_details_doctor.html`
+  - `patient_details_nurse.html`
+  - `patient_info.html`
+  - `styles.css`
+  
+- `src/`
+  - `anomaly_detection.py`
+  - `auth_utils.py`
+  - `data_gen_main.py`
+  - `db_connect.py`
+  - `graph_utils.py`
+  - `models.py`
+  - `notes.txt`
+  - `report_details.py`
+  - `static_data_gen.py`
+  - `threshold_data.py`
+  - `ui_connect.py`
+  - `vitals_gen.py`
+  
+- `documentation/`
+  - `SRS.pdf`
+  - `SDS.pdf`
+  
+- `requirements.txt`
 
-# Future enhancements
+# Future Enhancements
+
+- **Frontend Improvements**  
+  Replace the current raw HTML with a modern frontend framework (e.g., React, Vue.js, or a UI library like Bootstrap) for a more responsive and user-friendly interface.
+
+- **Backend and Database Improvements**  
+  Upgrade the backend structure and migrate from SQLite to a more robust database solution such as PostgreSQL or MySQL.
+
+- **Scalability**  
+  Refactor the project to create a scalable version that can support deployment in real-world hospital environments, handling more patients, staff, and real-time data efficiently.
+
+- **Authentication and Authorization**  
+  Implement secure role-based access control for staff (e.g., doctors, nurses, admins) to protect sensitive patient data.
+
+- **Alert Notification System**  
+  Develop real-time alerts (e.g., in-app popups or email notifications) when patient vitals cross critical thresholds.
+
+- **Analytics Dashboard**  
+  Create a dashboard displaying patient trends, vitals statistics, and system-wide health insights.
+
 # Contributions
