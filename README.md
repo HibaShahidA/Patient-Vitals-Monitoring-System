@@ -101,3 +101,7 @@ python3 src/ui_connect.py
   Create a dashboard displaying patient trends, vitals statistics, and system-wide health insights.
 
 # Contributions
+
+- **Fatima Hassan** — Frontend development, frontend logic, wireframes
+- **Aiman Rizwan** — Documentation (SRS, SDS)
+- **Hiba Shahid** — Backend development (data generation, database, server logic)
