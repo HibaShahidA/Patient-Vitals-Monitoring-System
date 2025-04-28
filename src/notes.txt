@@ -1,12 +1,47 @@
 models.py
-credential class for storing staff password
-more tables can be added
+- Purpose: Contains the Credential class for storing staff passwords securely. It also includes models for other database tables, which can be expanded based on future requirements.
+- Note: The passwords are stored as hashed values for security, with an option to view raw passwords temporarily for testing. This feature is not intended for production.
 
 mock_data_gen.py
-should show passwords but they are meant to be stored as hash addresses to maintain security
-the option to view raw passwords is temporary and can be removed from the code without issues
+- Purpose: Generates mock data for testing purposes.
+- Security Note: While passwords are displayed in the mock data for ease of development, they are stored as hash addresses in the database to maintain security. The raw password display is a temporary feature and can be removed without affecting functionality.
 
 db_connect.py
-estavlishes a base for db connection
-allows the db to be connected in a way that we can create random data or populate it with real world data
-no changes to be done, just foundation structure
+- Purpose: Establishes the base for the database connection. It handles the logic for connecting to the database and allows the population of random or real-world data.
+- Note: The code serves as the foundational structure for future database operations, with no changes needed at this stage.
+
+anomaly_detection.py
+- Purpose: Continuously monitors patient vitals and compares them with preset thresholds. Alerts are generated based on predefined conditions (e.g., 2, 5, or 10+ anomalies).
+- Note: The script runs in a loop, checking the most recent vitals for anomalies and creating alerts accordingly.
+
+auth_utils.py
+- Purpose: Handles authentication and authorization logic for staff members. Ensures that only authorized personnel can access patient data.
+- Note: Includes helper functions for verifying staff credentials and managing roles (e.g., doctor, nurse).
+
+data_gen_main.py
+- Purpose: Main script for generating synthetic patient data. It ties together the data generation processes from multiple files and initializes the database with the generated data.
+- Note: This is the entry point for running the data generation process.
+
+graph_utils.py
+- Purpose: Contains utilities for creating and updating graphs for patient vitals.
+- Note: Includes functions to generate real-time graphs, especially for displaying glucose levels and breathing rates.
+
+report_details.py
+- Purpose: Manages the generation of reports for patient vitals and anomalies.
+- Note: Responsible for gathering relevant data and formatting it into report-ready structures.
+
+static_data_gen.py
+- Purpose: Generates static or predefined data for testing or demonstration purposes.
+- Note: This is used to simulate real-world scenarios with mock patient information.
+
+threshold_data.py
+- Purpose: Stores and manages threshold data for patient vitals.
+- Note: Contains rules for setting upper and lower bounds based on patient demographics (age, gender, etc.).
+
+ui_connect.py
+- Purpose: Handles the connection between the frontend (UI) and backend logic.
+- Note: This script ensures the frontend can send requests to the backend and update the user interface accordingly.
+
+vitals_gen.py
+- Purpose: Responsible for simulating the generation of patient vitals (e.g., glucose levels, heart rate, etc.).
+- Note: Continuously generates random vitals data for patients, which is used for both testing and live monitoring.
