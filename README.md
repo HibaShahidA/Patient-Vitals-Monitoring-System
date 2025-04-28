@@ -21,6 +21,35 @@ The data set used for testing is collected through multiple resources, such as:
 - real-life data from multiple medical sources (to be edited as per use)
 
 # Set-up instructions
+
+## 1. Install Dependencies
+Install all required Python packages by running:
+```bash
+pip install --no-cache-dir -r requirements.txt
+```
+
+## 2. Start the Data Generation Service
+Open a terminal and run:
+```bash
+python3 src/data_gen_main.py
+```
+
+## 3. Start the Web Application
+Open another terminal and run:
+```bash
+python3 src/ui_connect.py
+```
+
+## 4. Access the Application
+- After starting `ui_connect.py`, a link will appear in the terminal (e.g., `http://127.0.0.1:5001`).
+- Open your browser, paste the link into the address bar, and append `/login` at the end.
+  Example:
+  ```bash
+  http://127.0.0.1:5001/login
+  ```
+
 # Folder Structure
+
+
 # Future enhancements
 # Contributions
